@@ -87,6 +87,7 @@ class LibraryRegistry(object):
         )
         self.validation_controller = ValidationController(self)
         self.coverage_controller = CoverageController(self)
+        self.static_files = StaticFileController(self)
 
         self.heartbeat = HeartbeatController()
         vendor_id, node_value, delegates = Configuration.vendor_id(self._db)
@@ -150,13 +151,30 @@ class BaseController(object):
 
 
 class ViewController(BaseController):
+
+    @classmethod
+    def debug_file_path(cls):
+        return Configuration.admin_ui_package_abs(development=True)
+
+    # If a local copy of the CSS and JS is available, we serve it instead of the copy
+    # from the CDN, so that it is easy to debug and test changes to the JS app
+    @classmethod
+    def use_debug_paths(cls):
+        return os.path.isdir(cls.debug_file_path())
+
     def __call__(self):
         username = session.get('username', '')
-        response = Response(flask.render_template_string(
+        dev_mode = self.use_debug_paths()
+        admin_js = Configuration.admin_ui_asset_file(asset_type='JS', development=dev_mode)
+        admin_css = Configuration.admin_ui_asset_file(asset_type='CSS', development=dev_mode)
+
+        return Response(flask.render_template_string(
             admin_template,
-            username=username
+            username=username,
+            admin_js=admin_js,
+            admin_css=admin_css,
         ))
-        return response
+
 
 class LibraryRegistryController(BaseController):
 
@@ -690,6 +708,13 @@ class LibraryRegistryController(BaseController):
         else:
             status_code = 200
         return self.catalog_response(catalog, status_code)
+
+
+class StaticFileController(BaseController):
+
+    def static_file(self, filename):
+        static_path = os.path.join(Configuration.admin_ui_package_abs(development=True), 'dist')
+        return flask.send_from_directory(static_path, filename)
 
 
 class ValidationController(BaseController):

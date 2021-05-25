@@ -1,3 +1,4 @@
+from collections import namedtuple
 import contextlib
 import copy
 import json
@@ -25,9 +26,21 @@ class Configuration(object):
 
     instance = None
 
+    APP_BASE_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
+
     # Environment variables that contain URLs to the database
     DATABASE_TEST_ENVIRONMENT_VARIABLE = 'SIMPLIFIED_TEST_DATABASE'
     DATABASE_PRODUCTION_ENVIRONMENT_VARIABLE = 'SIMPLIFIED_PRODUCTION_DATABASE'
+
+    # Environment variables that contain admin client package information.
+    ENV_ADMIN_UI_PACKAGE_NAME = 'LIBRARY_REGISTRY_ADMIN_PACKAGE_NAME'
+    ENV_ADMIN_UI_PACKAGE_VERSION = 'LIBRARY_REGISTRY_ADMIN_PACKAGE_VERSION'
+
+    ADMIN_UI_DEFAULT_PACKAGE_NAME = '@thepalaceproject/library-registry-admin'
+
+    ADMIN_UI_CDN_PACKAGE_TEMPLATE = 'https://cdn.jsdelivr.net/npm/{name}{version}'
+    ADMIN_UI_DEV_PACKAGE_TEMPLATE = 'node_modules/{name}'
+    ADMIN_UI_ASSET_LOCATION_REL_TEMPLATE = 'static/{asset}'
 
     log = logging.getLogger("Configuration file loader")
 
@@ -115,3 +128,54 @@ class Configuration(object):
             integration.setting(cls.ADOBE_VENDOR_ID).value,
             node, delegates,
         )
+
+    @classmethod
+    def admin_ui_asset_file(cls, asset_type: str, *, development=False) -> str:
+        """Get the HTML reference for a file, suitable for a link or script element.
+
+        :param asset_type: The filetype of the asset. For example,
+            "js" or "css".
+        :param development: Boolean indicating whether (True) or not (False)
+            we're seeking the development or production location.
+        :return: An HTML reference to the file.
+        """
+        # Assuming here that names of js and css assets will follow package
+        # name. This might become incorrect at some point in the future.
+        name = (os.environ.get(cls.ENV_ADMIN_UI_PACKAGE_NAME) or cls.ADMIN_UI_DEFAULT_PACKAGE_NAME)
+        # Node package name might have a scope.
+        filename = name.split('/')[-1]
+        asset_path = '/static'
+        if not development:
+            asset_path = os.path.join(cls.admin_ui_package_abs(development=development), 'dist')
+        return os.path.join(asset_path, f'{filename}.{asset_type.lower()}')
+
+    @classmethod
+    def admin_ui_package_rel(cls, *, development=False) -> str:
+        """Compute the location (URL or path) for the admin UI package or specified asset type.
+
+        :param asset_type: The filetype of the asset. For example,
+            "js" or "css".
+        :param development: Boolean indicating whether (True) or not (False)
+            we're seeking the development or production location.
+
+        :return: String representation of the URL/path for either the asset
+            of the given type or, if no type is specified, the base path
+            of the package.
+        """
+        template = (cls.ADMIN_UI_DEV_PACKAGE_TEMPLATE
+                    if development
+                    else cls.ADMIN_UI_CDN_PACKAGE_TEMPLATE)
+
+        name = (os.environ.get(cls.ENV_ADMIN_UI_PACKAGE_NAME) or
+                cls.ADMIN_UI_DEFAULT_PACKAGE_NAME)
+        version = os.environ.get(cls.ENV_ADMIN_UI_PACKAGE_VERSION)
+        version = f'@{version}' if version else ''
+
+        return template.format(name=name, version=version)
+
+    @classmethod
+    def admin_ui_package_abs(cls, *, development=False, base_dir=APP_BASE_DIRECTORY) -> str:
+        location = cls.admin_ui_package_rel(development=development)
+        if development:
+            location = os.path.join(base_dir, location)
+        return location

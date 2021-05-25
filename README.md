@@ -73,6 +73,21 @@ While the cluster is running, you can access the containers with these commands:
 
 The Library Registry listens (via Nginx) on port 80, so once the cluster is running you should be able to point a browser at `http://localhost/admin/` and access it with the username/password `admin/admin`.
 
+The [Library Registry Admin](git clone https://github.com/thepalaceproject/library-registry-admin.git)
+front end is implemented as a Node package. The name and version are
+exposed to the Python app via environment variables, so that they can easily
+be adjusted for new versions or if the package name changes. For example,
+```shell
+LIBRARY_REGISTRY_ADMIN_PACKAGE_NAME=@thepalaceproject/library-registry-admin
+LIBRARY_REGISTRY_ADMIN_PACKAGE_VERSION=1.0.0
+```
+
+If `LIBRARY_REGISTRY_ADMIN_PACKAGE_NAME` is not set, a default value is provided. If 
+`LIBRARY_REGISTRY_ADMIN_PACKAGE_VERSION` is not set, the most recent version with be used.
+
+These variables can be added to a `.env` (or similar) file to make it easier to have them set automatically
+with tools like `dotenv`.
+
 ## Installation (non-Docker)
 
 To install the registry locally, you'll need the following:
@@ -108,12 +123,14 @@ CREATE EXTENSION fuzzystrmatch;
 CREATE EXTENSION postgis;
 ```
 
-You should then create a `.env` file in the project directory with the following contents:
-
+The database configuration is exposed to the application via environment variables.
 ```SHELL
 SIMPLIFIED_TEST_DATABASE=postgresql://simplified_test:simplified_test@localhost:5432/simplified_registry_test
 SIMPLIFIED_PRODUCTION_DATABASE=postgresql://simplified:simplified@localhost:5432/simplified_registry_dev
 ```
+To ensure that 
+You should then create a `.env` file in the project directory with the following contents.
+
 
 ### Installing Python Dependencies
 

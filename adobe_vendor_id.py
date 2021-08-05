@@ -330,7 +330,7 @@ class AdobeVendorIDClient(object):
     def status(self):
         """Is the server up and running?"""
         response = requests.get(self.status_url)
-        content = response.content
+        content = response.text
         self.handle_error(response.status_code, content)
         if content == 'UP':
             return True
@@ -355,7 +355,7 @@ class AdobeVendorIDClient(object):
         """Turn a user identifier into a label."""
         body = self.USER_INFO_BODY % urn
         response = requests.post(self.accountinfo_url, data=body)
-        content = response.content
+        content = response.text
         self.handle_error(response.status_code, content)
         label = self.extract_label(content)
         if not label:
@@ -384,7 +384,7 @@ class AdobeVendorIDClient(object):
         return match.groups()[0]
 
     def _process_sign_in_result(self, response):
-        content = response.content
+        content = response.text
         self.handle_error(response.status_code, content)
         identifier = self.extract_user_identifier(content)
         label = self.extract_label(content)

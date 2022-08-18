@@ -184,7 +184,7 @@ testing = ["covdefaults (>=1.2.0)", "coverage (>=4)", "pytest (>=4)", "pytest-co
 
 [[package]]
 name = "flask"
-version = "2.0.1"
+version = "2.0.3"
 description = "A simple framework for building complex web applications."
 category = "main"
 optional = false
@@ -215,7 +215,7 @@ Jinja2 = ">=2.5"
 pytz = "*"
 
 [package.extras]
-dev = ["pytest", "pytest-mock", "bumpversion", "ghp-import", "sphinx", "pallets-sphinx-themes"]
+dev = ["pallets-sphinx-themes", "sphinx", "ghp-import", "bumpversion", "pytest-mock", "pytest"]
 
 [[package]]
 name = "flask-bcrypt"
@@ -453,8 +453,8 @@ autopep8 = "*"
 six = "*"
 
 [package.extras]
-docs = ["sphinx (==1.8.1)", "sphinx-rtd-theme", "sphinx-jinja", "sphinx-copybutton", "docfly (>=0.0.17)", "rstobj (>=0.0.5)", "pygments"]
-tests = ["pytest", "pytest-cov"]
+tests = ["pytest-cov", "pytest"]
+docs = ["pygments", "rstobj (>=0.0.5)", "docfly (>=0.0.17)", "sphinx-copybutton", "sphinx-jinja", "sphinx-rtd-theme", "sphinx (==1.8.1)"]
 
 [[package]]
 name = "pillow"
@@ -565,10 +565,10 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
+tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
+docs = ["zope.interface", "sphinx-rtd-theme", "sphinx"]
+dev = ["pre-commit", "mypy", "coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)", "cryptography (>=3.3.1,<4.0.0)", "zope.interface", "sphinx-rtd-theme", "sphinx"]
 crypto = ["cryptography (>=3.3.1,<4.0.0)"]
-dev = ["sphinx", "sphinx-rtd-theme", "zope.interface", "cryptography (>=3.3.1,<4.0.0)", "pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)", "mypy", "pre-commit"]
-docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)"]
 
 [[package]]
 name = "pyparsing"
@@ -757,8 +757,8 @@ requests = "*"
 sqlalchemy = "*"
 
 [package.extras]
-docs = ["sphinx (==1.8.1)", "sphinx-rtd-theme", "sphinx-jinja", "sphinx-copybutton", "docfly (>=0.0.17)", "rstobj (>=0.0.5)", "pygments"]
-tests = ["pytest (==3.2.3)", "pytest-cov (==2.5.1)", "python-levenshtein"]
+tests = ["python-levenshtein", "pytest-cov (==2.5.1)", "pytest (==3.2.3)"]
+docs = ["pygments", "rstobj (>=0.0.5)", "docfly (>=0.0.17)", "sphinx-copybutton", "sphinx-jinja", "sphinx-rtd-theme", "sphinx (==1.8.1)"]
 
 [[package]]
 name = "virtualenv"
@@ -944,8 +944,8 @@ filelock = [
     {file = "filelock-3.4.1.tar.gz", hash = "sha256:0f12f552b42b5bf60dba233710bf71337d35494fc8bdd4fd6d9f6d082ad45e06"},
 ]
 flask = [
-    {file = "Flask-2.0.1-py3-none-any.whl", hash = "sha256:a6209ca15eb63fc9385f38e452704113d679511d9574d09b2cf9183ae7d20dc9"},
-    {file = "Flask-2.0.1.tar.gz", hash = "sha256:1c4c257b1892aec1398784c63791cbaa43062f1f7aeb555c4da961b20ee68f55"},
+    {file = "Flask-2.0.3-py3-none-any.whl", hash = "sha256:59da8a3170004800a2837844bfa84d49b022550616070f7cb1a659682b2e7c9f"},
+    {file = "Flask-2.0.3.tar.gz", hash = "sha256:e1120c228ca2f553b470df4a5fa927ab66258467526069981b3eb0a91902687d"},
 ]
 flask-babel = [
     {file = "Flask-Babel-2.0.0.tar.gz", hash = "sha256:f9faf45cdb2e1a32ea2ec14403587d4295108f35017a7821a2b1acb8cfd9257d"},
